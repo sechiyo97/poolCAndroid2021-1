@@ -18,7 +18,9 @@ class MainActivity : Activity() {
             layoutManager = GridLayoutManager(this@MainActivity, 3)
         }
 
-        searchImage("life")
+        search_button.setOnClickListener {
+            searchImage(search_edit_text.text.toString())
+        }
     }
 
     fun searchImage(query: String) {
