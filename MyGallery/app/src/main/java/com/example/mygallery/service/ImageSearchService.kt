@@ -25,7 +25,10 @@ val retrofit = Retrofit.Builder()
 interface ImageSearchService {
     @Headers("X-Naver-Client-Id: $NAVER_API_ID", "X-Naver-Client-Secret: $NAVER_API_SECRET")
     @GET("/v1/search/image")
-    fun searchImages(@Query("query") query : String) : Call<ImageSearchResponse>
+    fun searchImages(
+        @Query("query") query : String,
+        @Query("display") display: Int
+    ) : Call<ImageSearchResponse>
 }
 
 object ImageSearchAPI {

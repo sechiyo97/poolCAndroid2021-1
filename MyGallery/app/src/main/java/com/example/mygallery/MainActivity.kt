@@ -23,7 +23,7 @@ class MainActivity : Activity() {
 
     fun searchImage(query: String) {
         thread {
-            val result = ImageSearchAPI.retrofitService.searchImages(query).execute()
+            val result = ImageSearchAPI.retrofitService.searchImages(query, 100).execute()
             if (result.isSuccessful) {
                 val items: List<ImageItem>? = result.body()?.items
                 if (items?.size ?: 0 > 0) {
