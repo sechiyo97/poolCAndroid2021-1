@@ -14,6 +14,9 @@ import java.util.*
  */
 
 class AlarmService : Service() {
+    private var alarmManager : AlarmManager? = null
+    private var pendingIntent : PendingIntent? = null
+
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
@@ -41,22 +44,26 @@ class AlarmService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
 
-        val sender = getBroadcast(
+        pendingIntent = getBroadcast(
             this,
             0,
             Intent(this, AlarmReceiver::class.java),
             FLAG_UPDATE_CURRENT
         )
 
-        val currentTime = Calendar.getInstance().timeInMillis
-        val triggerTime = currentTime + 10 * 1000
-        alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime , sender)
-//        sendBroadcast(
-//            Intent(this, AlarmReceiver::class.java)
-//        )
+        val triggerTime = intent?.getLongExtra("alarmTime", 0L) ?: 0
+        if (triggerTime > Calendar.getInstance().timeInMillis) {
+            alarmManager?.set(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+        }
+
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        alarmManager?.cancel(pendingIntent)
     }
 
     companion object {
