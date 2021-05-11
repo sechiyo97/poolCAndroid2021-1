@@ -2,10 +2,12 @@ package com.example.alarmapp
 
 import android.app.*
 import android.app.NotificationManager.IMPORTANCE_DEFAULT
+import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.app.PendingIntent.getBroadcast
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import java.util.*
 
 /**
  * Created by seheelee on 2021-05-11.
@@ -39,9 +41,21 @@ class AlarmService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        sendBroadcast(
-            Intent(this, AlarmReceiver::class.java)
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+
+        val sender = getBroadcast(
+            this,
+            0,
+            Intent(this, AlarmReceiver::class.java),
+            FLAG_UPDATE_CURRENT
         )
+
+        val currentTime = Calendar.getInstance().timeInMillis
+        val triggerTime = currentTime + 10 * 1000
+        alarmManager.set(AlarmManager.RTC_WAKEUP, triggerTime , sender)
+//        sendBroadcast(
+//            Intent(this, AlarmReceiver::class.java)
+//        )
         return super.onStartCommand(intent, flags, startId)
     }
 

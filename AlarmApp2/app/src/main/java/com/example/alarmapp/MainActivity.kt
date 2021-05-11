@@ -1,8 +1,11 @@
 package com.example.alarmapp
 
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import android.widget.Toast
 
@@ -19,6 +22,22 @@ class MainActivity : AppCompatActivity() {
             startService(
                 Intent(this, alarmService::class.java)
             )
+        }
+
+        checkPermission()
+    }
+
+    private fun checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:" + this.packageName)
+                )
+                startActivityForResult(intent, 1)
+            } else {
+                //Permission Granted-System will work
+            }
         }
     }
 }
