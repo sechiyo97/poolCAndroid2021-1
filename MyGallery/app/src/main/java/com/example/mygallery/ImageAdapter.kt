@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import java.net.URL
 
 /**
  * Created by seheelee on 2021-04-27.
@@ -32,10 +30,10 @@ class ImageAdapter : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
         val item = imageList[position]
 
         Glide.with(holder.itemImage.context)
-            .load(Uri.parse(item.src))
+            .load(Uri.parse(item.thumbnail))
             .into(holder.itemImage)
 
-        holder.itemText.text = item.description + ", " + position.toString()
+        holder.itemText.text = item.title + ", " + position.toString()
     }
 
     override fun getItemCount() = imageList.size

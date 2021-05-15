@@ -3,7 +3,9 @@ package com.example.mygallery
 import android.app.Activity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.mygallery.service.ImageSearchAPI
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlin.concurrent.thread
 
 class MainActivity : Activity() {
     private val imageAdapter = ImageAdapter()
@@ -16,12 +18,25 @@ class MainActivity : Activity() {
             layoutManager = GridLayoutManager(this@MainActivity, 3)
         }
 
-        for (i in 0 until 100) {
-            imageAdapter.imageList.add(
-                ImageItem("https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP.DK3glilaJHLDWStvRbGLaAHaHa%26pid%3DApi&f=1", "Image Item")
-            )
+        search_button.setOnClickListener {
+            searchImage(search_edit_text.text.toString())
         }
+    }
 
-        imageAdapter.notifyDataSetChanged()
+    fun searchImage(query: String) {
+        thread {
+            val result = ImageSearchAPI.retrofitService.searchImages(query, 100).execute()
+            if (result.isSuccessful) {
+                val items: List<ImageItem>? = result.body()?.items
+                if (items?.size ?: 0 > 0) {
+                    imageAdapter.imageList.clear()
+                    imageAdapter.imageList.addAll(items ?: emptyList())
+
+                    runOnUiThread {
+                        imageAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
     }
 }
