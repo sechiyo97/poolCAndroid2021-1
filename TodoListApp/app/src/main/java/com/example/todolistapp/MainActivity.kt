@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         new_task_button.setOnClickListener {
             startActivityForResult(
                 Intent(this, NewTaskActivity::class.java),
-                1234
+                NEW_TASK_REQUEST_CODE
             )
         }
 
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1234 && resultCode == RESULT_OK) {
+        if (requestCode == NEW_TASK_REQUEST_CODE && resultCode == RESULT_OK) {
             val taskName = data?.getStringExtra("task_name")
             taskName?.let {
                 val task = Task(it)
@@ -55,5 +55,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    companion object {
+        private const val NEW_TASK_REQUEST_CODE = 1234
     }
 }
