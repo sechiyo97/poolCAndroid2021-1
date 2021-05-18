@@ -26,18 +26,30 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
         val task = tasks[position]
-        holder.nameText.text = task.name
-        holder.nameText.setTextColor(
-            ContextCompat.getColor(
-                holder.nameText.context,
-                if (task.done) R.color.gray else R.color.black
-            )
-        )
-        holder.checkBox.isChecked = task.done
 
-        holder.checkBox.setOnClickListener {
-            task.done = holder.checkBox.isChecked
-            notifyItemChanged(position)
+        holder.nameText.apply {
+            text = task.name
+            setTextColor(
+                ContextCompat.getColor(
+                    holder.nameText.context,
+                    if (task.done) R.color.gray else R.color.black
+                )
+            )
+        }
+
+        holder.checkBox.apply {
+            isChecked = task.done
+            setOnClickListener {
+                task.done = holder.checkBox.isChecked
+                notifyItemChanged(position)
+            }
+        }
+
+        holder.itemView.setOnLongClickListener {
+            tasks.removeAt(position)
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position, tasks.size)
+            true
         }
     }
 

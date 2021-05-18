@@ -1,5 +1,6 @@
 package com.example.todolistapp
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,11 +17,36 @@ class MainActivity : AppCompatActivity() {
             adapter = taskAdapter
         }
 
-        taskAdapter.tasks.addAll(
-            listOf(
-                Task("첫 번째 할일"),
-                Task("두 번째 할일", true)
+        new_task_button.setOnClickListener {
+            startActivityForResult(
+                Intent(this, NewTaskActivity::class.java),
+                1234
             )
-        )
+        }
+
+//        taskAdapter.tasks.addAll(
+//            listOf(
+//                Task("첫 번째 할일"),
+//                Task("두 번째 할일", true)
+//            )
+//        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        println("activity result")
+        if (requestCode == 1234 && resultCode == RESULT_OK) {
+            val taskName = data?.getStringExtra("task_name")
+            println("task name get")
+            taskName?.let {
+                println("get $it")
+                taskAdapter.tasks.add(
+                    Task(it)
+                )
+                taskAdapter.notifyItemInserted(
+                    taskAdapter.tasks.lastIndex
+                )
+            }
+        }
     }
 }
