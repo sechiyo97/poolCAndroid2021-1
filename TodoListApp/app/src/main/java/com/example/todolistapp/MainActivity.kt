@@ -4,10 +4,15 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.todolistapp.data.Task
+import com.example.todolistapp.data.TaskDao
+import com.example.todolistapp.data.TaskDatabase
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private val taskAdapter = TaskAdapter()
+    private var taskDB : TaskDatabase ?= null
+    private var taskDao : TaskDao ?= null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -24,28 +29,30 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-//        taskAdapter.tasks.addAll(
-//            listOf(
-//                Task("첫 번째 할일"),
-//                Task("두 번째 할일", true)
-//            )
-//        )
+        taskDB = TaskDatabase.getDatabase(this)
+        taskDao = taskDB?.taskDao()
+
+        taskDB?.queryExecutor?.execute {
+            taskDao?.getAll()?.let {
+                taskAdapter.tasks.addAll(it)
+                taskAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        println("activity result")
         if (requestCode == 1234 && resultCode == RESULT_OK) {
             val taskName = data?.getStringExtra("task_name")
-            println("task name get")
             taskName?.let {
-                println("get $it")
-                taskAdapter.tasks.add(
-                    Task(it)
-                )
+                val task = Task(it)
+                taskAdapter.tasks.add(task)
                 taskAdapter.notifyItemInserted(
                     taskAdapter.tasks.lastIndex
                 )
+                taskDB?.queryExecutor?.execute {
+                    taskDao?.insert(task)
+                }
             }
         }
     }

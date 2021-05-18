@@ -7,6 +7,8 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todolistapp.data.Task
+import com.example.todolistapp.data.TaskDatabase
 
 /**
  * Created by seheelee on 2021-05-18.
@@ -42,6 +44,13 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
             setOnClickListener {
                 task.done = holder.checkBox.isChecked
                 notifyItemChanged(position)
+
+                val taskDB = TaskDatabase.getDatabase(this.context)
+                val taskDao = taskDB.taskDao()
+
+                taskDB.queryExecutor.execute {
+                    taskDao.update(task)
+                }
             }
         }
 
@@ -49,6 +58,14 @@ class TaskAdapter : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
             tasks.removeAt(position)
             notifyItemRemoved(position)
             notifyItemRangeChanged(position, tasks.size)
+
+            val taskDB = TaskDatabase.getDatabase(it.context)
+            val taskDao = taskDB.taskDao()
+
+            taskDB.queryExecutor.execute {
+                taskDao.delete(task)
+            }
+
             true
         }
     }
