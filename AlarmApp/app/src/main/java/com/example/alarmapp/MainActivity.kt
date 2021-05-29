@@ -8,8 +8,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Button
+import android.widget.TextView
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -23,7 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        set_alarm_btn.setOnClickListener {
+        val set_alarm_button = findViewById<Button>(R.id.set_alarm_btn)
+        set_alarm_button.setOnClickListener {
             Toast.makeText(this, "$year/$month/$day $hour:$minute 에 알람이 울립니다.", Toast.LENGTH_SHORT).show()
 
             val alarmCalendar = Calendar.getInstance()
@@ -36,11 +38,15 @@ class MainActivity : AppCompatActivity() {
             startService(intent)
         }
 
-        clear_alarm_btn.setOnClickListener {
+        val clear_alarm_button = findViewById<Button>(R.id.clear_alarm_btn)
+        clear_alarm_button.setOnClickListener {
             stopService(
                 Intent(this, AlarmService::class.java)
             )
         }
+
+        val text_date = findViewById<TextView>(R.id.text_date)
+        val text_time = findViewById<TextView>(R.id.text_time)
 
         text_time.setOnClickListener {
             val currentCalendar = Calendar.getInstance()
@@ -75,6 +81,7 @@ class MainActivity : AppCompatActivity() {
         this.hour = hour
         this.minute = minute
 
+        val text_time = findViewById<TextView>(R.id.text_time)
         text_time.text = "$hour:$minute"
     }
 
@@ -83,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         this.month = month
         this.day = day
 
+        val text_date = findViewById<TextView>(R.id.text_date)
         text_date.text = "$year/$month/$day"
     }
 

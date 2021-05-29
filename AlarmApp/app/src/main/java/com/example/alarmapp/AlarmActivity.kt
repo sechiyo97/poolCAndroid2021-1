@@ -3,8 +3,9 @@ package com.example.alarmapp
 import android.media.MediaPlayer
 import android.media.RingtoneManager
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_alarm.*
 
 /**
  * Created by seheelee on 2021-05-11.
@@ -19,12 +20,13 @@ class AlarmActivity : AppCompatActivity() {
 
         playMusic()
 
+        val stop_alarm_button = findViewById<Button>(R.id.stop_alarm_button)
         stop_alarm_button.setOnClickListener {
             mediaPlayer.stop()
         }
     }
 
-    private fun playMusic() {
+    fun playMusic() {
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
         mediaPlayer = MediaPlayer.create(this, alarmSound)
         mediaPlayer.isLooping = true
